@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Game of three</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="menu">
+        <div class="menu_start"></div>
+    </div>
+    <div class="status" id="status">Starting a game</div>
+    <div class="winner_board" id="winner_board">You Win</div>
+    <div class="new_game_container">
+        <div class="new_game" id="new_game" onclick="location.reload();">
+            New Game
+        </div>
+    </div>
+    <div class="init" id="init">
+        <input type="number" id="inputValue" value="56">
+        <div class="init_button" id="initButton">Start</div>
+    </div>
+    <div class="control" id="control">
+        <div class="control_value" id="value"></div>
+        <div class="control_button" id="plus">+</div>
+        <div class="control_button" id="zero">0</div>
+        <div class="control_button" id="minus">-</div>
+        <div>
+            <div class="control_button" id="man-auto">AUTO</div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+<script src="/static/js/watch.js"></script>
+<script src="/static/js/main.js"></script>
+</body>
+</html>
