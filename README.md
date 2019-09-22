@@ -1,13 +1,13 @@
 # Game Of Three
 
-This is a two player game, the first player incepts a random number, that will be divide by three and sent to the other player,
-the player can add or subtract one, or do nothing, the new number is also divided by three and sent to the other player,
-the winner is the player who will do an operation that results to **1**.
-The game can be played by to many players, each two player will join a single game.
+When a player starts, it incepts a random (whole) number and sends it to the second
+player as an approach of starting the game. The receiving player can now always choose
+between adding one of {-1, 0, 1} to get to a number that is divisible by 3. Divide it by three. The
+resulting whole number is then sent back to the original sender.
 
 ## Running locally
 You can start the game on your terminal, if you have this requirements:
-- java > 8
+- java >= 8
 - mongodb database
 - maven
 
@@ -24,7 +24,10 @@ $ docker-compose up -d
 ```
 
 You can access the game from your browser on `http://localhost:8080`,
+
 Use different browser sessions for different players.
+
+Multiple games can be played simultaneously. 
 
 ## Technical description
 
