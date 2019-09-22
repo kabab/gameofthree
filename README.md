@@ -3,7 +3,9 @@
 
 # Running locally
 
-`docker-compose up -d`
+```
+$ docker-compose up -d
+```
 
 # Demo
 
