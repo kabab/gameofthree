@@ -1,9 +1,9 @@
 # Game Of Three
 
-To run the app localy, an up & running mongodb database needed, it can be also run using docker or docker-compose
 
 # Running locally
 
 
 # Demo
 
+![Alt Text](https://media.giphy.com/media/U7n9gOOayAppCa3pgI/giphy.gif)
