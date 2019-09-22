@@ -1,9 +1,9 @@
 package com.takeaway.gameofthree.services;
 
 import com.takeaway.gameofthree.domains.Game;
-import com.takeaway.gameofthree.domains.GameMove;
-import com.takeaway.gameofthree.domains.GameNotFoundException;
-import com.takeaway.gameofthree.domains.GameState;
+import com.takeaway.gameofthree.enumerations.GameMove;
+import com.takeaway.gameofthree.exceptions.GameNotFoundException;
+import com.takeaway.gameofthree.enumerations.GameState;
 import com.takeaway.gameofthree.repositories.GameRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,15 @@ public class GameService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    /**
+     * Rejoin, Join or create a new game
+     * the method accept two parameters, if they both exist, it will check if the game exists
+     * otherwise it will check if there's an available game to join
+     * if not a new game is created and returned
+     * @param gameId
+     * @param playerId
+     * @return
+     */
     public Game join(String gameId, String playerId) {
         log.info("gameId {} playerId {}", gameId, playerId);
         // Rejoin an old started game
@@ -59,14 +68,22 @@ public class GameService {
         }
 
         // Create a new game
-
         Game game = new Game();
         game.setPlayerOne(UUID.randomUUID().toString());
         game.setPlayerTurn(1);
         return gameRepository.save(game);
     }
 
-
+    /**
+     * The method will initialize a already created game
+     * checking if the player has the right to initialize the game
+     * it will change the player turn after initialization
+     * @param gameId
+     * @param value
+     * @param playerId
+     * @return
+     * @throws GameNotFoundException
+     */
     public Game init(String gameId, Integer value, String playerId) throws GameNotFoundException {
         Optional<Game> gameOpt = gameRepository.findById(gameId);
 
@@ -80,14 +97,27 @@ public class GameService {
             return game;
 
         game.setCount(value);
+        game.addChange(GameMove.MOVE_INIT, value, 1);
         game.setPlayerTurn(2);
         gameRepository.save(game);
         messagingTemplate.convertAndSend("/topic/game/" + game.getId(), game);
         return game;
     }
 
-
-    public Game move(String gameId, GameMove.Moves move, String playerId) throws GameNotFoundException {
+    /**
+     *  This method will take a move, playerId and a gameId and decide the next state of the game
+     *  it will check the turn of the player if it's not it will do nothing
+     *  if the game is over it will do nothing
+     *  if the move is accepted, the a new state of the game is created with new count and the flipping of the player turn
+     *  if the move is accepted, the next state is broadcasted to the gameId topic
+     * @param gameId
+     * @param move
+     * @param playerId
+     * @return new state of the game
+     * @throws GameNotFoundException
+     * @
+     */
+    public Game move(String gameId, GameMove move, String playerId) throws GameNotFoundException {
 
         Optional<Game> gameOpt = gameRepository.findById(gameId);
 
@@ -96,21 +126,11 @@ public class GameService {
 
         Game game = gameOpt.get();
 
-        if (game.getState().equals(GameState.GAME_OVER)) {
-            log.info("Game Over");
+        if (!game.isPlayerTurn(playerId) || game.isOver()) {
             game.setPlayerOne(null);
             game.setPlayerTwo(null);
             return game;
         }
-
-        if ( (playerId.equals(game.getPlayerOne()) && game.getPlayerTurn() == 2) ||
-            (playerId.equals(game.getPlayerTwo()) && game.getPlayerTurn() == 1)) {
-            log.info("Not player turn");
-            game.setPlayerOne(null);
-            game.setPlayerTwo(null);
-            return game;
-        }
-
 
         switch (move) {
             case MOVE_ADD:
@@ -126,11 +146,13 @@ public class GameService {
         }
 
         if (game.getCount() == 1) {
-            game.setState(GameState.GAME_OVER);
+            game.over();
+        } else {
+            game.nextPlayer();
         }
 
-        if (!game.getState().equals(GameState.GAME_OVER))
-            game.setPlayerTurn(1 + ( game.getPlayerTurn() % 2) );
+        game.addChange(move, game.getCount(), game.getPlayerNum(playerId));
+
         gameRepository.save(game);
         game.setPlayerOne(null);
         game.setPlayerTwo(null);

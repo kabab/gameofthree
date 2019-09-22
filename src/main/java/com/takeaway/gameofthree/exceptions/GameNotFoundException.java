@@ -1,4 +1,4 @@
-package com.takeaway.gameofthree.domains;
+package com.takeaway.gameofthree.exceptions;
 
 public class GameNotFoundException extends Exception {
 }

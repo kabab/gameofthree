@@ -1,4 +1,4 @@
-package com.takeaway.gameofthree.domains;
+package com.takeaway.gameofthree.enumerations;
 
 public enum GameState {
     GAME_CREATED,

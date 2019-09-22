@@ -1,8 +1,9 @@
 package com.takeaway.gameofthree.controllers;
 
+import com.takeaway.gameofthree.GameMoveHelper;
 import com.takeaway.gameofthree.domains.Game;
-import com.takeaway.gameofthree.domains.GameMove;
-import com.takeaway.gameofthree.domains.GameNotFoundException;
+import com.takeaway.gameofthree.enumerations.GameMove;
+import com.takeaway.gameofthree.exceptions.GameNotFoundException;
 import com.takeaway.gameofthree.services.GameService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class GameController {
         try {
             String[] split = message.split("\\|");
             if (split.length != 2) return "ERROR";
-            GameMove.Moves move = GameMove.fromString(split[0]);
+            GameMove move = GameMoveHelper.fromString(split[0]);
             gameService.move(gameId, move, split[1]);
             log.info("Move accepted {}, playerId {}", move, split[1]);
             return "OK";
