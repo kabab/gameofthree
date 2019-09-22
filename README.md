@@ -3,6 +3,7 @@
 
 # Running locally
 
+`docker-compose up -d`
 
 # Demo
 
